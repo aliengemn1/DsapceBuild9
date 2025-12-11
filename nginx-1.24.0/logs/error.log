@@ -1,0 +1,1 @@
+2025/12/09 21:43:01 [error] 50608#30920: *14 CreateFile() "C:\DsapceBuild9\nginx-1.24.0/html/favicon.ico" failed (2: The system cannot find the file specified), client: 127.0.0.1, server: localhost, request: "GET /favicon.ico HTTP/1.1", host: "localhost", referrer: "http://localhost/"

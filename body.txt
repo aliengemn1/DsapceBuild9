@@ -1,0 +1,18 @@
+{
+  "id" : null,
+  "okay" : true,
+  "authenticated" : false,
+  "authenticationMethod" : null,
+  "type" : "status",
+  "_links" : {
+    "eperson" : {
+      "href" : "http://localhost:8080/server/api/authn/status/eperson"
+    },
+    "specialGroups" : {
+      "href" : "http://localhost:8080/server/api/authn/status/specialGroups"
+    },
+    "self" : {
+      "href" : "http://localhost:8080/server/api/authn/status"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+HTTP/1.1 200 
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers
+Content-Language: en
+WWW-Authenticate: password realm="DSpace REST API"
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 0
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Type: application/hal+json;charset=UTF-8
+Transfer-Encoding: chunked
+Date: Tue, 09 Dec 2025 18:54:05 GMT
+

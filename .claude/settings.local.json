@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl:*)",
+      "Bash(\"/c/solr-9.9.0/bin/solr.cmd\" start)",
+      "Bash(cmd /c \"C:\\solr-9.9.0\\bin\\solr.cmd start\")",
+      "Bash(cmd /c \"net start postgresql-x64-18\")"
+    ]
+  }
+}
