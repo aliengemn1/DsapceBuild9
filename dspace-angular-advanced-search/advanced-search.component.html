@@ -1,0 +1,344 @@
+<!--
+  Advanced Search Component Template for DSpace 9 Angular UI
+  Place this file in: src/app/advanced-search/advanced-search.component.html
+-->
+<div class="advanced-search-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>Advanced Search</h1>
+    <p class="lead">Build complex queries to find exactly what you're looking for.</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible" role="alert">
+    <button type="button" class="close" (click)="errorMessage = ''" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Search Form -->
+  <div class="card search-form-card">
+    <div class="card-body">
+      <form [formGroup]="advancedSearchForm" (ngSubmit)="search()">
+
+        <!-- Scope Selection -->
+        <div class="form-group row mb-4">
+          <label class="col-sm-2 col-form-label" for="scope">Search In:</label>
+          <div class="col-sm-10">
+            <select class="form-control" id="scope" formControlName="scope">
+              <option *ngFor="let option of scopeOptions" [value]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Search Rows -->
+        <div class="search-rows" formArrayName="searchRows">
+          <div *ngFor="let row of searchRows.controls; let i = index; let first = first"
+               [formGroupName]="i"
+               class="search-row mb-3">
+
+            <!-- Boolean Operator (for rows after the first) -->
+            <div class="row align-items-center">
+              <div class="col-md-2" *ngIf="!first">
+                <select class="form-control boolean-operator"
+                        formControlName="booleanOperator"
+                        aria-label="Boolean operator">
+                  <option *ngFor="let op of booleanOperators" [value]="op.value">
+                    {{ op.label }}
+                  </option>
+                </select>
+              </div>
+              <div class="col-md-2" *ngIf="first">
+                <!-- Spacer for alignment -->
+              </div>
+
+              <!-- Field Selector -->
+              <div class="col-md-3">
+                <select class="form-control"
+                        formControlName="field"
+                        (change)="onFieldChange(i)"
+                        aria-label="Search field">
+                  <option *ngFor="let field of metadataFields" [value]="field.value">
+                    {{ field.label }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Operator Selector -->
+              <div class="col-md-2">
+                <select class="form-control"
+                        formControlName="operator"
+                        aria-label="Search operator">
+                  <option *ngFor="let op of getOperatorsForField(row.get('field')?.value)"
+                          [value]="op.value">
+                    {{ op.label }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Value Input -->
+              <div class="col-md-4">
+                <ng-container *ngIf="!isDateField(row.get('field')?.value); else dateInput">
+                  <input type="text"
+                         class="form-control"
+                         formControlName="value"
+                         placeholder="Enter search term..."
+                         [attr.aria-label]="'Search value for row ' + (i + 1)"
+                         [class.is-invalid]="row.get('value')?.errors && row.get('value')?.touched">
+                  <div class="invalid-feedback" *ngIf="row.get('value')?.errors?.required">
+                    Please enter a search value.
+                  </div>
+                </ng-container>
+
+                <ng-template #dateInput>
+                  <input type="text"
+                         class="form-control"
+                         formControlName="value"
+                         placeholder="YYYY or YYYY-MM or YYYY-MM-DD"
+                         [attr.aria-label]="'Date value for row ' + (i + 1)"
+                         [class.is-invalid]="row.get('value')?.errors && row.get('value')?.touched"
+                         *ngIf="row.get('operator')?.value !== 'range'">
+                  <div class="invalid-feedback" *ngIf="row.get('value')?.errors?.invalidDate">
+                    Please enter a valid date (YYYY, YYYY-MM, or YYYY-MM-DD).
+                  </div>
+                </ng-template>
+              </div>
+
+              <!-- Remove Row Button -->
+              <div class="col-md-1">
+                <button type="button"
+                        class="btn btn-outline-danger btn-sm"
+                        (click)="removeSearchRow(i)"
+                        [disabled]="searchRows.length === 1"
+                        aria-label="Remove search row"
+                        title="Remove this search row">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Date Range Inputs (shown when date field + range operator) -->
+            <div class="row mt-2" *ngIf="shouldShowDateRange(i)">
+              <div class="col-md-2"></div>
+              <div class="col-md-3">
+                <label class="sr-only" for="dateFrom_{{i}}">From Date</label>
+                <input type="text"
+                       class="form-control"
+                       id="dateFrom_{{i}}"
+                       formControlName="dateRangeFrom"
+                       placeholder="From: YYYY-MM-DD">
+              </div>
+              <div class="col-md-1 text-center pt-2">
+                <span>to</span>
+              </div>
+              <div class="col-md-3">
+                <label class="sr-only" for="dateTo_{{i}}">To Date</label>
+                <input type="text"
+                       class="form-control"
+                       id="dateTo_{{i}}"
+                       formControlName="dateRangeTo"
+                       placeholder="To: YYYY-MM-DD">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Row Button -->
+        <div class="mb-4">
+          <button type="button"
+                  class="btn btn-outline-secondary btn-sm"
+                  (click)="addSearchRow()"
+                  [disabled]="searchRows.length >= 10">
+            <i class="fas fa-plus"></i> Add Search Row
+          </button>
+          <small class="text-muted ms-2" *ngIf="searchRows.length >= 10">
+            Maximum 10 search rows allowed
+          </small>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <button type="submit"
+                  class="btn btn-primary"
+                  [disabled]="isLoading">
+            <i class="fas fa-search" *ngIf="!isLoading"></i>
+            <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+            {{ isLoading ? 'Searching...' : 'Search' }}
+          </button>
+
+          <button type="button"
+                  class="btn btn-secondary ms-2"
+                  (click)="clearAll()"
+                  [disabled]="isLoading">
+            <i class="fas fa-undo"></i> Reset
+          </button>
+
+          <button type="button"
+                  class="btn btn-link ms-2"
+                  (click)="switchToSimpleSearch()">
+            Switch to Simple Search
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Applied Filters Display -->
+  <div class="applied-filters mt-4" *ngIf="appliedFilters.length > 0 && searchResults">
+    <h5>Applied Filters:</h5>
+    <div class="filter-tags">
+      <span *ngFor="let filter of appliedFilters; let i = index"
+            class="badge badge-info filter-tag me-2 mb-2">
+        {{ filter }}
+        <button type="button"
+                class="btn-close btn-close-white ms-1"
+                aria-label="Remove filter"
+                (click)="removeFilter(i)">
+        </button>
+      </span>
+      <button type="button"
+              class="btn btn-link btn-sm"
+              (click)="clearAll()">
+        Clear All
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Results -->
+  <div class="search-results mt-4" *ngIf="searchResults">
+    <!-- Results Header -->
+    <div class="results-header d-flex justify-content-between align-items-center mb-3">
+      <h4>
+        Search Results
+        <small class="text-muted">({{ totalResults }} results found)</small>
+      </h4>
+
+      <!-- Page Size Selector -->
+      <div class="page-size-selector">
+        <label for="pageSize" class="me-2">Show:</label>
+        <select id="pageSize"
+                class="form-control form-control-sm d-inline-block w-auto"
+                [ngModel]="pageSize"
+                (ngModelChange)="onPageSizeChange($event)">
+          <option [value]="10">10</option>
+          <option [value]="20">20</option>
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+        </select>
+        <span class="ms-2">per page</span>
+      </div>
+    </div>
+
+    <!-- Results List -->
+    <div class="results-list" *ngIf="searchResults._embedded?.searchResult?._embedded?.objects">
+      <div *ngFor="let result of searchResults._embedded.searchResult._embedded.objects"
+           class="result-item card mb-3">
+        <div class="card-body">
+          <!-- Item Title -->
+          <h5 class="card-title">
+            <a [routerLink]="['/items', result._embedded?.indexableObject?.uuid]"
+               *ngIf="result._embedded?.indexableObject?.uuid">
+              {{ result._embedded?.indexableObject?.name || 'Untitled' }}
+            </a>
+            <span *ngIf="!result._embedded?.indexableObject?.uuid">
+              {{ result._embedded?.indexableObject?.name || 'Untitled' }}
+            </span>
+          </h5>
+
+          <!-- Item Metadata -->
+          <div class="item-metadata">
+            <!-- Authors -->
+            <p class="mb-1" *ngIf="result._embedded?.indexableObject?.metadata?.['dc.contributor.author']">
+              <strong>Author(s):</strong>
+              <span *ngFor="let author of result._embedded.indexableObject.metadata['dc.contributor.author']; let last = last">
+                {{ author.value }}<span *ngIf="!last">, </span>
+              </span>
+            </p>
+
+            <!-- Date Issued -->
+            <p class="mb-1" *ngIf="result._embedded?.indexableObject?.metadata?.['dc.date.issued']">
+              <strong>Date:</strong>
+              {{ result._embedded.indexableObject.metadata['dc.date.issued'][0]?.value }}
+            </p>
+
+            <!-- Type -->
+            <p class="mb-1" *ngIf="result._embedded?.indexableObject?.metadata?.['dc.type']">
+              <strong>Type:</strong>
+              {{ result._embedded.indexableObject.metadata['dc.type'][0]?.value }}
+            </p>
+
+            <!-- Abstract (truncated) -->
+            <p class="mb-1 abstract" *ngIf="result._embedded?.indexableObject?.metadata?.['dc.description.abstract']">
+              {{ result._embedded.indexableObject.metadata['dc.description.abstract'][0]?.value | slice:0:300 }}
+              <span *ngIf="result._embedded.indexableObject.metadata['dc.description.abstract'][0]?.value?.length > 300">...</span>
+            </p>
+          </div>
+
+          <!-- Hit Highlights -->
+          <div class="hit-highlights mt-2" *ngIf="result.hitHighlights">
+            <small class="text-muted">
+              <strong>Matches:</strong>
+              <span [innerHTML]="result.hitHighlights | json"></span>
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Results Message -->
+    <div class="no-results alert alert-info"
+         *ngIf="searchResults._embedded?.searchResult?._embedded?.objects?.length === 0">
+      <i class="fas fa-info-circle"></i>
+      No results found. Try adjusting your search criteria.
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Search results pagination"
+         *ngIf="totalResults > pageSize">
+      <ul class="pagination justify-content-center">
+        <!-- Previous -->
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link"
+             href="javascript:void(0)"
+             (click)="onPageChange(currentPage - 1)"
+             aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+
+        <!-- Page Numbers -->
+        <li class="page-item"
+            *ngFor="let page of [].constructor(Math.ceil(totalResults / pageSize)); let i = index"
+            [class.active]="currentPage === i + 1">
+          <a class="page-link"
+             href="javascript:void(0)"
+             (click)="onPageChange(i + 1)"
+             *ngIf="i + 1 >= currentPage - 2 && i + 1 <= currentPage + 2">
+            {{ i + 1 }}
+          </a>
+        </li>
+
+        <!-- Next -->
+        <li class="page-item"
+            [class.disabled]="currentPage >= Math.ceil(totalResults / pageSize)">
+          <a class="page-link"
+             href="javascript:void(0)"
+             (click)="onPageChange(currentPage + 1)"
+             aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+</div>

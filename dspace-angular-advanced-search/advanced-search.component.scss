@@ -1,0 +1,332 @@
+/**
+ * Advanced Search Component Styles for DSpace 9 Angular UI
+ * Place this file in: src/app/advanced-search/advanced-search.component.scss
+ */
+
+.advanced-search-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+
+  .page-header {
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #dee2e6;
+
+    h1 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .lead {
+      color: #666;
+      margin-bottom: 0;
+    }
+  }
+
+  .search-form-card {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+
+    .card-body {
+      padding: 25px;
+    }
+  }
+
+  .search-row {
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    margin-bottom: 10px;
+
+    &:hover {
+      background: #f8f9fa;
+    }
+
+    .boolean-operator {
+      font-weight: 600;
+      background-color: #e9ecef;
+      border-color: #ced4da;
+    }
+  }
+
+  .form-actions {
+    padding-top: 20px;
+    border-top: 1px solid #dee2e6;
+    margin-top: 20px;
+
+    .btn-primary {
+      min-width: 120px;
+
+      i {
+        margin-right: 5px;
+      }
+    }
+
+    .btn-secondary {
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  // Applied Filters
+  .applied-filters {
+    background: #e7f3ff;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #b8daff;
+
+    h5 {
+      margin-bottom: 10px;
+      color: #004085;
+    }
+
+    .filter-tags {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+
+      .filter-tag {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+        background-color: #17a2b8;
+        display: inline-flex;
+        align-items: center;
+
+        .btn-close {
+          font-size: 0.6rem;
+          padding: 0;
+          margin-left: 8px;
+          opacity: 0.8;
+
+          &:hover {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+
+  // Search Results
+  .search-results {
+    .results-header {
+      padding: 15px 0;
+      border-bottom: 2px solid #dee2e6;
+
+      h4 {
+        margin-bottom: 0;
+
+        small {
+          font-size: 0.8rem;
+        }
+      }
+
+      .page-size-selector {
+        display: flex;
+        align-items: center;
+
+        select {
+          width: 70px;
+        }
+      }
+    }
+
+    .results-list {
+      .result-item {
+        transition: box-shadow 0.2s ease;
+
+        &:hover {
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+          a {
+            color: #0066cc;
+            text-decoration: none;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+
+        .item-metadata {
+          font-size: 0.9rem;
+          color: #555;
+
+          p {
+            margin-bottom: 5px;
+
+            strong {
+              color: #333;
+              min-width: 80px;
+              display: inline-block;
+            }
+          }
+
+          .abstract {
+            color: #666;
+            line-height: 1.5;
+          }
+        }
+
+        .hit-highlights {
+          background: #fffce6;
+          padding: 8px 12px;
+          border-radius: 4px;
+          border-left: 3px solid #ffc107;
+
+          em {
+            background: #ffeb3b;
+            padding: 1px 3px;
+            font-style: normal;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 40px;
+
+      i {
+        margin-right: 10px;
+      }
+    }
+
+    // Pagination
+    .pagination {
+      margin-top: 30px;
+
+      .page-link {
+        color: #0066cc;
+
+        &:hover {
+          background-color: #e9ecef;
+        }
+      }
+
+      .page-item.active .page-link {
+        background-color: #0066cc;
+        border-color: #0066cc;
+      }
+
+      .page-item.disabled .page-link {
+        color: #999;
+      }
+    }
+  }
+
+  // Loading Overlay
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+
+  // Form validation styles
+  .is-invalid {
+    border-color: #dc3545;
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+    }
+  }
+
+  .invalid-feedback {
+    display: block;
+    font-size: 0.8rem;
+    color: #dc3545;
+  }
+
+  // Alert styles
+  .alert {
+    border-radius: 6px;
+
+    &.alert-danger {
+      background-color: #f8d7da;
+      border-color: #f5c6cb;
+      color: #721c24;
+    }
+
+    &.alert-info {
+      background-color: #d1ecf1;
+      border-color: #bee5eb;
+      color: #0c5460;
+    }
+  }
+
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    padding: 10px;
+
+    .search-row {
+      .row > div {
+        margin-bottom: 10px;
+      }
+    }
+
+    .results-header {
+      flex-direction: column;
+      align-items: flex-start !important;
+
+      .page-size-selector {
+        margin-top: 10px;
+      }
+    }
+
+    .form-actions {
+      .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 10px;
+        margin-left: 0 !important;
+      }
+    }
+  }
+}
+
+// RTL Support for Arabic UI
+[dir="rtl"] .advanced-search-container {
+  .search-row {
+    .col-md-1 {
+      text-align: left;
+    }
+  }
+
+  .item-metadata {
+    strong {
+      margin-left: 10px;
+      margin-right: 0;
+    }
+  }
+
+  .hit-highlights {
+    border-left: none;
+    border-right: 3px solid #ffc107;
+  }
+
+  .btn {
+    i {
+      margin-right: 0;
+      margin-left: 5px;
+    }
+  }
+}

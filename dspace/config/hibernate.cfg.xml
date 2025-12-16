@@ -110,5 +110,8 @@
         <mapping class="org.dspace.app.ldn.LDNMessageEntity"/>
         <mapping class="org.dspace.app.ldn.NotifyPatternToTrigger"/>
 
+        <!-- Admin PDF Export -->
+        <mapping class="org.dspace.app.pdfexport.PdfExportRequest"/>
+
     </session-factory>
 </hibernate-configuration>

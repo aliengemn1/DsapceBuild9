@@ -1,0 +1,307 @@
+<!--
+    ============================================================================
+    DISCOVERY.XML ADDITIONS FOR ADVANCED SEARCH
+    DSpace 9 Backend Configuration
+    ============================================================================
+
+    Add these bean definitions to:
+    [dspace]/config/spring/api/discovery.xml
+
+    These configurations add support for the additional metadata fields
+    required by the Advanced Search feature.
+
+    INSTRUCTIONS:
+    1. Copy the search filter beans below into your discovery.xml file
+       (before the </beans> closing tag)
+    2. Add the filter references to the defaultConfiguration's
+       sidebarFacets and searchFilters lists
+    3. Restart DSpace and reindex: ./dspace index-discovery -b
+
+    ============================================================================
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- ================================================================== -->
+    <!-- SEARCH FILTER BEANS FOR ADVANCED SEARCH                            -->
+    <!-- ================================================================== -->
+
+    <!--
+        Publisher Search Filter
+        Allows searching and filtering by dc.publisher metadata field
+    -->
+    <bean id="searchFilterPublisher" class="org.dspace.discovery.configuration.DiscoverySearchFilterFacet">
+        <property name="indexFieldName" value="publisher"/>
+        <property name="metadataFields">
+            <list>
+                <value>dc.publisher</value>
+            </list>
+        </property>
+        <property name="facetLimit" value="10"/>
+        <property name="sortOrderSidebar" value="COUNT"/>
+        <property name="sortOrderFilterPage" value="COUNT"/>
+        <property name="isOpenByDefault" value="false"/>
+        <property name="pageSize" value="10"/>
+    </bean>
+
+    <!--
+        Language Search Filter
+        Allows searching and filtering by language (ISO code)
+    -->
+    <bean id="searchFilterLanguage" class="org.dspace.discovery.configuration.DiscoverySearchFilterFacet">
+        <property name="indexFieldName" value="language"/>
+        <property name="metadataFields">
+            <list>
+                <value>dc.language</value>
+                <value>dc.language.iso</value>
+            </list>
+        </property>
+        <property name="facetLimit" value="10"/>
+        <property name="sortOrderSidebar" value="COUNT"/>
+        <property name="sortOrderFilterPage" value="COUNT"/>
+        <property name="isOpenByDefault" value="false"/>
+        <property name="pageSize" value="10"/>
+    </bean>
+
+    <!--
+        Item Type Search Filter
+        Allows searching and filtering by document/item type
+    -->
+    <bean id="searchFilterItemType" class="org.dspace.discovery.configuration.DiscoverySearchFilterFacet">
+        <property name="indexFieldName" value="itemtype"/>
+        <property name="metadataFields">
+            <list>
+                <value>dc.type</value>
+            </list>
+        </property>
+        <property name="facetLimit" value="10"/>
+        <property name="sortOrderSidebar" value="COUNT"/>
+        <property name="sortOrderFilterPage" value="COUNT"/>
+        <property name="isOpenByDefault" value="true"/>
+        <property name="pageSize" value="10"/>
+    </bean>
+
+    <!--
+        Abstract/Description Search Filter
+        Allows searching within abstracts and descriptions
+    -->
+    <bean id="searchFilterAbstract" class="org.dspace.discovery.configuration.DiscoverySearchFilter">
+        <property name="indexFieldName" value="abstract"/>
+        <property name="metadataFields">
+            <list>
+                <value>dc.description.abstract</value>
+                <value>dc.description</value>
+            </list>
+        </property>
+        <property name="isOpenByDefault" value="false"/>
+        <property name="pageSize" value="10"/>
+    </bean>
+
+    <!--
+        Identifier Search Filter
+        Allows searching by various identifiers (DOI, ISBN, etc.)
+    -->
+    <bean id="searchFilterIdentifier" class="org.dspace.discovery.configuration.DiscoverySearchFilter">
+        <property name="indexFieldName" value="identifier"/>
+        <property name="metadataFields">
+            <list>
+                <value>dc.identifier</value>
+                <value>dc.identifier.doi</value>
+                <value>dc.identifier.isbn</value>
+                <value>dc.identifier.issn</value>
+                <value>dc.identifier.uri</value>
+            </list>
+        </property>
+        <property name="isOpenByDefault" value="false"/>
+        <property name="pageSize" value="10"/>
+    </bean>
+
+    <!--
+        Rights/License Search Filter
+        Allows filtering by access rights and licenses
+    -->
+    <bean id="searchFilterRights" class="org.dspace.discovery.configuration.DiscoverySearchFilterFacet">
+        <property name="indexFieldName" value="rights"/>
+        <property name="metadataFields">
+            <list>
+                <value>dc.rights</value>
+                <value>dc.rights.uri</value>
+            </list>
+        </property>
+        <property name="facetLimit" value="10"/>
+        <property name="sortOrderSidebar" value="COUNT"/>
+        <property name="sortOrderFilterPage" value="COUNT"/>
+        <property name="isOpenByDefault" value="false"/>
+        <property name="pageSize" value="10"/>
+    </bean>
+
+    <!--
+        Series/Report Number Search Filter
+    -->
+    <bean id="searchFilterSeries" class="org.dspace.discovery.configuration.DiscoverySearchFilter">
+        <property name="indexFieldName" value="series"/>
+        <property name="metadataFields">
+            <list>
+                <value>dc.relation.ispartofseries</value>
+            </list>
+        </property>
+        <property name="isOpenByDefault" value="false"/>
+        <property name="pageSize" value="10"/>
+    </bean>
+
+    <!--
+        Source/Journal Search Filter
+    -->
+    <bean id="searchFilterSource" class="org.dspace.discovery.configuration.DiscoverySearchFilter">
+        <property name="indexFieldName" value="source"/>
+        <property name="metadataFields">
+            <list>
+                <value>dc.source</value>
+            </list>
+        </property>
+        <property name="isOpenByDefault" value="false"/>
+        <property name="pageSize" value="10"/>
+    </bean>
+
+    <!-- ================================================================== -->
+    <!-- ADVANCED SEARCH CONFIGURATION                                       -->
+    <!-- This configuration can be used specifically for advanced search     -->
+    <!-- ================================================================== -->
+
+    <bean id="advancedSearchConfiguration" class="org.dspace.discovery.configuration.DiscoveryConfiguration" scope="prototype">
+        <property name="id" value="advanced"/>
+
+        <!--Which sidebar facets are to be displayed in advanced search results-->
+        <property name="sidebarFacets">
+            <list>
+                <ref bean="searchFilterAuthor" />
+                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterIssued" />
+                <ref bean="searchFilterPublisher" />
+                <ref bean="searchFilterLanguage" />
+                <ref bean="searchFilterItemType" />
+                <ref bean="searchFilterContentInOriginalBundle"/>
+                <ref bean="searchFilterEntityType"/>
+            </list>
+        </property>
+
+        <!--The search filters available for advanced search-->
+        <property name="searchFilters">
+            <list>
+                <ref bean="searchFilterTitle" />
+                <ref bean="searchFilterAuthor" />
+                <ref bean="searchFilterSubject" />
+                <ref bean="searchFilterIssued" />
+                <ref bean="searchFilterPublisher" />
+                <ref bean="searchFilterLanguage" />
+                <ref bean="searchFilterItemType" />
+                <ref bean="searchFilterAbstract" />
+                <ref bean="searchFilterIdentifier" />
+                <ref bean="searchFilterContentInOriginalBundle"/>
+                <ref bean="searchFilterFileNameInOriginalBundle" />
+                <ref bean="searchFilterFileDescriptionInOriginalBundle" />
+                <ref bean="searchFilterEntityType"/>
+                <ref bean="searchFilterRights"/>
+                <ref bean="searchFilterSeries"/>
+                <ref bean="searchFilterSource"/>
+            </list>
+        </property>
+
+        <!--The sort filters for advanced search results-->
+        <property name="searchSortConfiguration">
+            <bean class="org.dspace.discovery.configuration.DiscoverySortConfiguration">
+                <property name="sortFields">
+                    <list>
+                        <ref bean="sortScore" />
+                        <ref bean="sortTitle" />
+                        <ref bean="sortDateIssued" />
+                        <ref bean="sortDateAccessioned"/>
+                    </list>
+                </property>
+            </bean>
+        </property>
+
+        <!--Default filter queries for advanced search-->
+        <property name="defaultFilterQueries">
+            <list>
+                <!--Only find items, communities and collections-->
+                <value>(search.resourcetype:Item AND latestVersion:true) OR search.resourcetype:Collection OR search.resourcetype:Community</value>
+                <value>-withdrawn:true AND -discoverable:false</value>
+            </list>
+        </property>
+
+        <!--Default results per page-->
+        <property name="defaultRpp" value="10" />
+
+        <!--Hit highlighting configuration for advanced search-->
+        <property name="hitHighlightingConfiguration">
+            <bean class="org.dspace.discovery.configuration.DiscoveryHitHighlightingConfiguration">
+                <property name="metadataFields">
+                    <list>
+                        <bean class="org.dspace.discovery.configuration.DiscoveryHitHighlightFieldConfiguration">
+                            <property name="field" value="dc.title"/>
+                            <property name="snippets" value="5"/>
+                        </bean>
+                        <bean class="org.dspace.discovery.configuration.DiscoveryHitHighlightFieldConfiguration">
+                            <property name="field" value="dc.contributor.author"/>
+                            <property name="snippets" value="5"/>
+                        </bean>
+                        <bean class="org.dspace.discovery.configuration.DiscoveryHitHighlightFieldConfiguration">
+                            <property name="field" value="dc.description.abstract"/>
+                            <property name="maxSize" value="300"/>
+                            <property name="snippets" value="3"/>
+                        </bean>
+                        <bean class="org.dspace.discovery.configuration.DiscoveryHitHighlightFieldConfiguration">
+                            <property name="field" value="dc.subject"/>
+                            <property name="snippets" value="5"/>
+                        </bean>
+                        <bean class="org.dspace.discovery.configuration.DiscoveryHitHighlightFieldConfiguration">
+                            <property name="field" value="dc.publisher"/>
+                            <property name="snippets" value="3"/>
+                        </bean>
+                    </list>
+                </property>
+            </bean>
+        </property>
+
+        <!-- Spell check enabled -->
+        <property name="spellCheckEnabled" value="true"/>
+    </bean>
+
+</beans>
+
+<!--
+    ============================================================================
+    HOW TO INTEGRATE WITH EXISTING DISCOVERY.XML
+    ============================================================================
+
+    Step 1: Add the search filter beans above (searchFilterPublisher,
+            searchFilterLanguage, etc.) to your discovery.xml file.
+
+    Step 2: Register the advancedSearchConfiguration in the
+            DiscoveryConfigurationService map:
+
+            <entry key="advanced" value-ref="advancedSearchConfiguration"/>
+
+    Step 3: Add the new filter references to the defaultConfiguration:
+
+            In the sidebarFacets list, add:
+                <ref bean="searchFilterPublisher" />
+                <ref bean="searchFilterLanguage" />
+                <ref bean="searchFilterItemType" />
+
+            In the searchFilters list, add:
+                <ref bean="searchFilterPublisher" />
+                <ref bean="searchFilterLanguage" />
+                <ref bean="searchFilterItemType" />
+                <ref bean="searchFilterAbstract" />
+                <ref bean="searchFilterIdentifier" />
+
+    Step 4: Restart DSpace and reindex:
+            cd [dspace-install]/bin
+            ./dspace index-discovery -b
+
+    ============================================================================
+-->
