@@ -107,6 +107,22 @@ public class WebSecurityConfiguration {
             .servletApi(Customizer.withDefaults())
             // Enable CORS for Spring Security (see CORS settings in Application and ApplicationConfig)
             .cors(Customizer.withDefaults())
+            // Configure HTTP Security Headers for protection against common web vulnerabilities
+            .headers((headers) -> headers
+                // X-Frame-Options: DENY - Prevents clickjacking attacks by disallowing framing
+                .frameOptions((frameOptions) -> frameOptions.deny())
+                // X-Content-Type-Options: nosniff - Prevents MIME type sniffing attacks
+                .contentTypeOptions(Customizer.withDefaults())
+                // X-XSS-Protection: 1; mode=block - Enables browser's XSS filter
+                .xssProtection(Customizer.withDefaults())
+                // HTTP Strict Transport Security (HSTS) - Forces HTTPS connections
+                // Only sent over HTTPS connections, max-age=31536000 (1 year), includes subdomains
+                .httpStrictTransportSecurity((hsts) -> hsts
+                    .includeSubDomains(true)
+                    .maxAgeInSeconds(31536000))
+                // Cache-Control headers for security-sensitive responses
+                .cacheControl(Customizer.withDefaults())
+            )
             // Enable CSRF protection with custom csrfTokenRepository and custom sessionAuthenticationStrategy
             // (both are defined below as methods).
             // While we primarily use JWT in headers, CSRF protection is needed because we also support JWT via Cookies
@@ -118,7 +134,9 @@ public class WebSecurityConfiguration {
                 // See https://github.com/DSpace/DSpace/issues/9450
                 // NOTE: DSpace doesn't need BREACH protection as it's only necessary when sending the token via a
                 // request attribute (e.g. "_csrf") which the DSpace UI never does.
-                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler()))
+                .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+                // Ignore CSRF for admin-pdf-export endpoint (uses Bearer token authentication)
+                .ignoringRequestMatchers(new AntPathRequestMatcher("/api/admin-pdf-export", HttpMethod.POST.name())))
             .exceptionHandling((exceptionHandling) -> exceptionHandling
                 // Return 401 on authorization failures with a correct WWWW-Authenticate header
                 .authenticationEntryPoint(new DSpace401AuthenticationEntryPoint(restAuthenticationService))

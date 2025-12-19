@@ -11,6 +11,7 @@ import static org.dspace.app.rest.utils.RegexUtils.REGEX_REQUESTMAPPING_IDENTIFI
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -111,10 +112,64 @@ public class BundleUploadBitstreamController {
             throw new UnprocessableEntityException("The InputStream from the file couldn't be read", e);
         }
 
+        // Sanitize filename to prevent path traversal attacks
+        String originalFilename = uploadfile.getOriginalFilename();
+        String sanitizedFilename = sanitizeFilename(originalFilename);
+
         BitstreamRest bitstreamRest = bundleRestRepository.uploadBitstream(
-                context, bundle, uploadfile.getOriginalFilename(), fileInputStream, properties);
+                context, bundle, sanitizedFilename, fileInputStream, properties);
         BitstreamResource bitstreamResource = converter.toResource(bitstreamRest);
 
         return ControllerUtils.toResponseEntity(HttpStatus.CREATED, new HttpHeaders(), bitstreamResource);
+    }
+
+    /**
+     * Sanitizes a filename to prevent path traversal and other security issues.
+     * - Extracts only the filename component (removes any path)
+     * - Removes null bytes and control characters
+     * - Replaces potentially dangerous characters
+     *
+     * @param filename The original filename from the upload
+     * @return A sanitized filename safe for storage
+     */
+    private String sanitizeFilename(String filename) {
+        if (filename == null || filename.isEmpty()) {
+            return "unnamed_file";
+        }
+
+        // Extract just the filename, removing any path components (handles both Unix and Windows paths)
+        String sanitized = Paths.get(filename).getFileName().toString();
+
+        // Remove null bytes (can be used to bypass security checks)
+        sanitized = sanitized.replace("\0", "");
+
+        // Remove or replace potentially dangerous characters
+        // Keep alphanumeric, dots, hyphens, underscores, and spaces
+        sanitized = sanitized.replaceAll("[^a-zA-Z0-9.\\-_ ]", "_");
+
+        // Prevent hidden files (starting with dot) unless it's just the extension
+        if (sanitized.startsWith(".") && sanitized.length() > 1 && sanitized.indexOf('.', 1) == -1) {
+            sanitized = "_" + sanitized.substring(1);
+        }
+
+        // Ensure filename is not empty after sanitization
+        if (sanitized.isEmpty() || sanitized.equals(".")) {
+            sanitized = "unnamed_file";
+        }
+
+        // Limit filename length to prevent issues with filesystem limits
+        if (sanitized.length() > 255) {
+            String extension = "";
+            int lastDot = sanitized.lastIndexOf('.');
+            if (lastDot > 0 && lastDot < sanitized.length() - 1) {
+                extension = sanitized.substring(lastDot);
+                if (extension.length() > 10) {
+                    extension = extension.substring(0, 10);
+                }
+            }
+            sanitized = sanitized.substring(0, 255 - extension.length()) + extension;
+        }
+
+        return sanitized;
     }
 }

@@ -387,7 +387,8 @@ public class PdfExportServiceImpl implements PdfExportService {
             try {
                 return Double.parseDouble(value);
             } catch (NumberFormatException e) {
-                log.warn("Invalid percentage value '{}' for {}, using default 0.25", value, CONFIG_MAX_CUSTOM_PERCENTAGE);
+                log.warn("Invalid percentage value '{}' for {}, using default 0.25",
+                         value, CONFIG_MAX_CUSTOM_PERCENTAGE);
             }
         }
         return 0.25;
