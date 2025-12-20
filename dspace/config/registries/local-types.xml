@@ -32,4 +32,19 @@
   </dc-type>
 -->
 
+  <!-- PDF Split Feature Metadata Fields -->
+  <dc-type>
+    <schema>local</schema>
+    <element>pdf</element>
+    <qualifier>abstract-pages</qualifier>
+    <scope_note>Page range for abstract extraction from PDF (e.g., "1-2" or "1,2,3")</scope_note>
+  </dc-type>
+
+  <dc-type>
+    <schema>local</schema>
+    <element>pdf</element>
+    <qualifier>toc-pages</qualifier>
+    <scope_note>Page range for table of contents extraction from PDF (e.g., "3-5")</scope_note>
+  </dc-type>
+
 </dspace-dc-types>

@@ -194,6 +194,13 @@
             <type>extract</type>
         </step-definition>
 
+        <!-- PDF Split step - extracts abstract and TOC pages from uploaded PDFs -->
+        <step-definition id="pdfsplit">
+            <heading>submit.progressbar.pdfsplit</heading>
+            <processing-class>org.dspace.app.rest.submit.step.PdfSplitStep</processing-class>
+            <type>pdfsplit</type>
+        </step-definition>
+
         <!-- Openaire submission steps/forms -->
         <step-definition id="openaireProjectForm" mandatory="true">
             <heading>submit.progressbar.describe.stepone</heading>
@@ -283,6 +290,13 @@
             <!--<step id="identifiers"/>-->
             <!--Step will be to Describe the item. -->
             <step id="traditionalpageone"/>
+
+            <!--Step will be to Upload the item (moved to step 2) -->
+            <step id="upload"/>
+
+            <!--Step will be to Split PDF (extract abstract and TOC pages) -->
+            <step id="pdfsplit"/>
+
             <step id="traditionalpagetwo"/>
 
             <!-- Uncomment this step to allow the user to embargo or access restrict the entire item -->
@@ -298,9 +312,6 @@
 
             <!--Step will be COAR Notify services to the item -->
             <!-- <step id="coarnotify"/> -->
-
-            <!--Step will be to Upload the item -->
-            <step id="upload"/>
 
             <!-- <step id="extractionstep"/> -->
 
@@ -321,8 +332,11 @@
             <step id="collection"/>
             <!-- Publications use a custom first step, but share page 2 with "traditional" Item form -->
             <step id="publicationStep"/>
-            <step id="traditionalpagetwo"/>
+            <!--Step will be to Upload the item (moved to step 2) -->
             <step id="upload"/>
+            <!--Step will be to Split PDF (extract abstract and TOC pages) -->
+            <step id="pdfsplit"/>
+            <step id="traditionalpagetwo"/>
             <step id="license"/>
         </submission-process>
 
@@ -333,7 +347,10 @@
         <submission-process name="Person">
             <step id="collection"/>
             <step id="personStep"/>
+            <!--Step will be to Upload the item (step 2) -->
             <step id="upload"/>
+            <!--Step will be to Split PDF (extract abstract and TOC pages) -->
+            <step id="pdfsplit"/>
             <step id="license"/>
         </submission-process>
 
@@ -344,7 +361,10 @@
         <submission-process name="Project">
             <step id="collection"/>
             <step id="projectStep"/>
+            <!--Step will be to Upload the item (step 2) -->
             <step id="upload"/>
+            <!--Step will be to Split PDF (extract abstract and TOC pages) -->
+            <step id="pdfsplit"/>
             <step id="license"/>
         </submission-process>
 
@@ -355,7 +375,10 @@
         <submission-process name="OrgUnit">
             <step id="collection"/>
             <step id="orgUnitStep"/>
+            <!--Step will be to Upload the item (step 2) -->
             <step id="upload"/>
+            <!--Step will be to Split PDF (extract abstract and TOC pages) -->
+            <step id="pdfsplit"/>
             <step id="license"/>
         </submission-process>
 
@@ -366,7 +389,10 @@
         <submission-process name="Journal">
             <step id="collection"/>
             <step id="journalStep"/>
+            <!--Step will be to Upload the item (step 2) -->
             <step id="upload"/>
+            <!--Step will be to Split PDF (extract abstract and TOC pages) -->
+            <step id="pdfsplit"/>
             <step id="license"/>
         </submission-process>
 
@@ -377,7 +403,10 @@
         <submission-process name="JournalVolume">
             <step id="collection"/>
             <step id="journalVolumeStep"/>
+            <!--Step will be to Upload the item (step 2) -->
             <step id="upload"/>
+            <!--Step will be to Split PDF (extract abstract and TOC pages) -->
+            <step id="pdfsplit"/>
             <step id="license"/>
         </submission-process>
 
@@ -388,7 +417,10 @@
         <submission-process name="JournalIssue">
             <step id="collection"/>
             <step id="journalIssueStep"/>
+            <!--Step will be to Upload the item (step 2) -->
             <step id="upload"/>
+            <!--Step will be to Split PDF (extract abstract and TOC pages) -->
+            <step id="pdfsplit"/>
             <step id="license"/>
         </submission-process>
 
@@ -398,11 +430,14 @@
 
             <!--Step will be to Describe the item. -->
             <step id="openairePublicationPageoneForm"/>
-            <step id="openairePublicationPagetwoForm"/>
 
-            <!--Step will be to Upload the item -->
-            <!-- step id="upload-with-embargo"/-->
+            <!--Step will be to Upload the item (moved to step 2) -->
             <step id="upload"/>
+
+            <!--Step will be to Split PDF (extract abstract and TOC pages) -->
+            <step id="pdfsplit"/>
+
+            <step id="openairePublicationPagetwoForm"/>
 
             <!--Step will be to Sign off on the License -->
             <step id="license"/>

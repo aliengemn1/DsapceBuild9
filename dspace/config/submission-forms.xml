@@ -46,6 +46,31 @@
                     <required></required>
                 </field>
             </row>
+            <!-- PDF Split Fields - Optional page ranges for automatic extraction -->
+            <row>
+                <field>
+                    <dc-schema>local</dc-schema>
+                    <dc-element>pdf</dc-element>
+                    <dc-qualifier>abstract-pages</dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Abstract Pages</label>
+                    <input-type>onebox</input-type>
+                    <hint>Enter page range for abstract extraction (e.g., "1-2" or "1,2,3"). Leave empty to skip.</hint>
+                    <required></required>
+                </field>
+            </row>
+            <row>
+                <field>
+                    <dc-schema>local</dc-schema>
+                    <dc-element>pdf</dc-element>
+                    <dc-qualifier>toc-pages</dc-qualifier>
+                    <repeatable>false</repeatable>
+                    <label>Table of Contents Pages</label>
+                    <input-type>onebox</input-type>
+                    <hint>Enter page range for table of contents extraction (e.g., "3-5"). Leave empty to skip.</hint>
+                    <required></required>
+                </field>
+            </row>
         </form>
 
         <!-- Form which defines the first page/section of the "traditional" DSpace submission process,
